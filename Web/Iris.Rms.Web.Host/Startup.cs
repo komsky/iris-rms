@@ -1,6 +1,7 @@
 ﻿using Iris.Rms.Data;
 using Iris.Rms.Interfaces;
 using Iris.Rms.Service;
+using Iris.Rms.Voice;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ namespace Iris.Rms.Web.Host
 
             services.AddTransient<DataSeeder>();
             services.AddTransient<IRmsService, RmsService>();
+            services.AddTransient<IVoiceRms, VoiceRms>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
         }
@@ -39,11 +41,7 @@ namespace Iris.Rms.Web.Host
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
 
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var seeder = scope.ServiceProvider.GetService<DataSeeder>();
-                seeder.Seed().Wait();
-            }
+
 
             if (env.IsDevelopment())
             {
@@ -57,6 +55,17 @@ namespace Iris.Rms.Web.Host
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetService<DataSeeder>();
+                seeder.Seed().Wait();
+
+
+                var voiceRms = scope.ServiceProvider.GetService<IVoiceRms>();
+                voiceRms.Listen();
+            }
+
         }
     }
 }

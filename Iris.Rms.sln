@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeroconf", "Services\Zeroco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Rms.Tests.ZeroConfConsole", "Tests\Iris.Rms.Tests.ZeroConfConsole\Iris.Rms.Tests.ZeroConfConsole.csproj", "{7A8A00F2-79AB-45D1-9EB4-618C550C5CA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Rms.Voice", "Services\Iris.Rms.Voice\Iris.Rms.Voice.csproj", "{BDE84409-FC4E-4111-BDFF-AB44A337D649}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{7A8A00F2-79AB-45D1-9EB4-618C550C5CA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A8A00F2-79AB-45D1-9EB4-618C550C5CA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A8A00F2-79AB-45D1-9EB4-618C550C5CA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDE84409-FC4E-4111-BDFF-AB44A337D649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDE84409-FC4E-4111-BDFF-AB44A337D649}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDE84409-FC4E-4111-BDFF-AB44A337D649}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDE84409-FC4E-4111-BDFF-AB44A337D649}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{85A949AB-E68E-4B17-8948-A870E10B6AD5} = {5BFDFB4D-53B6-4B67-AB3F-CF2CAD9996B3}
 		{ABDC4967-588E-484F-A97A-7523EDBDBF10} = {E2D2D29A-6F09-4C7D-A713-FC1D77614A24}
 		{7A8A00F2-79AB-45D1-9EB4-618C550C5CA7} = {5CFAC3BE-3A10-454A-B983-668056C8C265}
+		{BDE84409-FC4E-4111-BDFF-AB44A337D649} = {E2D2D29A-6F09-4C7D-A713-FC1D77614A24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EBDB4343-050D-4C09-9D28-271DD594F513}

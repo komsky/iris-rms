@@ -6,6 +6,10 @@ namespace Iris.Rms.Models
 {
     public class RmsDevice
     {
+        public RmsDevice()
+        {
+            Hooks = new List<WebHook>();
+        }
         [Key]
         public int RmsDeviceId { get; set; }
         public DeviceType Type { get; set; }

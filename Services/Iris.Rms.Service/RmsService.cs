@@ -1,6 +1,5 @@
 ﻿using Iris.Rms.Interfaces;
 using Iris.Rms.Models;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ namespace Iris.Rms.Service
         {
             using (var httpClient = new HttpClient())
             {
+                ConfigureHeaders(httpClient);
                 HttpResponseMessage result;
                 switch (webHook.Method)
                 {
@@ -28,6 +28,11 @@ namespace Iris.Rms.Service
                 }
                 return result;
             }
+        }
+
+        private void ConfigureHeaders(HttpClient httpClient)
+        {
+            httpClient.DefaultRequestHeaders.Add("X-API-Key", "Dssd2NfASDr34DTDAa9HlP8MPURVGN5bI0edwedsuay5sada");
         }
 
         private async Task<string> ResolveMdns(string hookUrl)

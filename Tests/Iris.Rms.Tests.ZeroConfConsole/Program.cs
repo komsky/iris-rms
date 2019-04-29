@@ -21,7 +21,7 @@ namespace Iris.Rms.Tests.ZeroConfConsole
         {
             var domains = await ZeroconfResolver.BrowseDomainsAsync();
 
-            var responses = await ZeroconfResolver.ResolveAsync(new string[] { "esp8266.local." });
+            var responses = await ZeroconfResolver.ResolveAsync(new string[] { "esp8266.local." },scanTime: TimeSpan.FromSeconds(20));
             // var responses = await ZeroconfResolver.ResolveAsync("_http._tcp.local.");
             //ZeroconfResolver.
             foreach (var resp in responses)

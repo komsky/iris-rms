@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\Common\Iris.Rms.Interfaces\Iris.Rms.Interfaces.csproj" />
     <ProjectReference Include="..\..\DAL\Iris.Rms.Data\Iris.Rms.Data.csproj" />
     <ProjectReference Include="..\..\Services\Iris.Rms.Service\Iris.Rms.Service.csproj" />
+    <ProjectReference Include="..\..\Services\Iris.Rms.Voice\Iris.Rms.Voice.csproj" />
   </ItemGroup>
 
 </Project>

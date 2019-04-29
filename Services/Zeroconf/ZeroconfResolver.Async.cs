@@ -49,7 +49,7 @@ namespace Zeroconf
         /// <returns></returns>
         public static async Task<IReadOnlyList<IZeroconfHost>> ResolveAsync(IEnumerable<string> protocols,
                                                                             TimeSpan scanTime = default(TimeSpan),
-                                                                            int retries = 2,
+                                                                            int retries = 3,
                                                                             int retryDelayMilliseconds = 2000,
                                                                             Action<IZeroconfHost> callback = null,
                                                                             CancellationToken cancellationToken = default(CancellationToken))

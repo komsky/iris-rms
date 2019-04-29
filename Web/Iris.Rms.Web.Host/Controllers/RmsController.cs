@@ -1,13 +1,15 @@
 ﻿using Iris.Rms.Data;
 using Iris.Rms.Interfaces;
 using Iris.Rms.Models;
+using Iris.Rms.Models.Enums;
+using Iris.Rms.Web.Host.Helpers;
 using Iris.Rms.Web.Host.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Iris.Rms.Web.Host.Controllers
@@ -28,7 +30,109 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             return _context.RmsList
                 .Include(rms => rms.Devices)
-                .ThenInclude(device=>device.Hooks).ToList();
+                .ThenInclude(device => device.Hooks).ToList();
+        }
+
+        [HttpPost]
+        public ActionResult<ApiResponse> PostHeartbeat(RmsConfigModel model)
+        {
+            if (model == null)
+            {
+                return new ApiResponse { Status = Status.Error, Message = "model was empty" };
+            }
+
+            try
+            {
+                if (_context.Devices.Any(device => device.IpAddress == model.RmsDeviceInterface.localIp))
+                {
+                    UpdateDevice(model);
+                    return new ApiResponse { Status = Status.Success, Message = "Device updated successfully - FAKE" };
+                }
+                else
+                {
+                    CreateDevice(model);
+                    return new ApiResponse { Status = Status.Success, Message = "Device created successfully - FAKE" };
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse { Status = Status.Error, Message = ex.Message });
+
+            }
+        }
+
+        private void CreateDevice(RmsConfigModel model)
+        {
+            RmsDevice device = new RmsDevice { IpAddress = model.RmsDeviceInterface.localIp, Location = model.RmsDeviceInterface.location, MAC = model.RmsDeviceInterface.macAddress };
+            foreach (RmsNode node in model.nodes)
+            {
+                foreach (RmsNodeDevice nodeDevice in node.devices)
+                {
+                    device.Hooks.Add(new WebHook { ActivationCommand = GetActivationCommand(nodeDevice.type), HookUrl = BuildHookUrl(nodeDevice, device), Method = "POST", Body = BuildHookActiveBody(nodeDevice, device) });
+                    device.Hooks.Add(new WebHook { ActivationCommand = GetDeactivationCommand(nodeDevice.type), HookUrl = BuildHookUrl(nodeDevice, device), Method = "POST", Body = BuildHookInactiveBody(nodeDevice, device) });
+                }
+            }
+            _context.Devices.Add(device);
+            _context.SaveChanges();
+        }
+
+        private string BuildHookActiveBody(RmsNodeDevice nodeDevice, RmsDevice device)
+        {
+            List<RmsNode> body = GetBodyStatusOn(nodeDevice, device);
+            return JsonConvert.SerializeObject(body);
+        }
+        private string BuildHookInactiveBody(RmsNodeDevice nodeDevice, RmsDevice device)
+        {
+            List<RmsNode> body = GetBodyStatusOff(nodeDevice, device);
+            return JsonConvert.SerializeObject(body);
+        }
+
+        private static List<RmsNode> GetBodyStatusOn(RmsNodeDevice nodeDevice, RmsDevice device)
+        {
+            return new List<RmsNode> { new RmsNode { macAddress = device.MAC, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = nodeDevice.macAddress, status = ((int)GenericStatus.On).ToString() } } } };
+        }
+        private static List<RmsNode> GetBodyStatusOff(RmsNodeDevice nodeDevice, RmsDevice device)
+        {
+            return new List<RmsNode> { new RmsNode { macAddress = device.MAC, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = nodeDevice.macAddress, status = ((int)GenericStatus.Off).ToString() } } } };
+        }
+
+        private string BuildHookUrl(RmsNodeDevice nodeDevice, RmsDevice device)
+        {
+            return new Uri($"http://{device.IpAddress}/api/status").ToString();
+        }
+
+        private RmsCommand GetActivationCommand(string type)
+        {
+            switch (type)
+            {
+                case "light_nondimmable":
+                    return RmsCommand.LightsOn;
+                default:
+                    return RmsCommand.LightsOn;
+            }
+        }
+        private RmsCommand GetDeactivationCommand(string type)
+        {
+            switch (type)
+            {
+                case "light_nondimmable":
+                    return RmsCommand.LightsOff;
+                default:
+                    return RmsCommand.LightsOff;
+            }
+        }
+
+        private void UpdateDevice(RmsConfigModel model)
+        {
+            RmsDevice device = _context.Devices.Single(rmsDevice => rmsDevice.MAC.ToUrlEncodedMac() == model.RmsDeviceInterface.macAddress.ToUrlEncodedMac());
+            foreach (RmsNode node in model.nodes)
+            {
+                foreach (RmsNodeDevice nodeDevice in node.devices)
+                {
+                    //TODO: update hooks here
+                }
+            }
+            _context.SaveChanges();
         }
 
         [HttpGet]
@@ -51,7 +155,7 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             try
             {
-                return _context.RmsList.Include(rms=>rms.Devices).Single(rms => rms.RmsId == rmsId).Devices.ToList();
+                return _context.RmsList.Include(rms => rms.Devices).Single(rms => rms.RmsId == rmsId).Devices.ToList();
             }
             catch (Exception ex)
             {
@@ -87,7 +191,7 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             try
             {
-                return _context.Devices.Include(device=>device.Hooks).Single(device => device.RmsDeviceId == deviceId);
+                return _context.Devices.Include(device => device.Hooks).Single(device => device.RmsDeviceId == deviceId);
 
             }
             catch (Exception ex)
@@ -101,7 +205,7 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             try
             {
-                _context.Devices.Include(device=>device.Hooks).Single(device => device.RmsDeviceId == deviceId).Hooks.Add(hook);
+                _context.Devices.Include(device => device.Hooks).Single(device => device.RmsDeviceId == deviceId).Hooks.Add(hook);
                 _context.SaveChanges();
                 return _context.Devices.Include(device => device.Hooks).Single(device => device.RmsDeviceId == deviceId).Hooks.ToList();
 
@@ -130,8 +234,8 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             try
             {
-                var thisWebHook =  _context.WebHooks.Single(webHook => webHook.WebHookId == webHookId);
-                var response =  await _rmsService.ActOnWebHook(thisWebHook);
+                WebHook thisWebHook = _context.WebHooks.Single(webHook => webHook.WebHookId == webHookId);
+                System.Net.Http.HttpResponseMessage response = await _rmsService.ActOnWebHook(thisWebHook);
                 return new ApiResponse { Status = Status.Success, Message = await response.Content.ReadAsStringAsync() };
             }
             catch (Exception ex)
@@ -155,10 +259,10 @@ namespace Iris.Rms.Web.Host.Controllers
                     throw new ArgumentNullException(nameof(status));
                 }
 
-                var device = _context.Devices.SingleOrDefault(x => x.MAC.Replace(":", "").ToLower() == deviceMac.Replace(":", "").ToLower());
+                RmsDevice device = _context.Devices.SingleOrDefault(x => x.MAC.ToUrlEncodedMac() == deviceMac.ToUrlEncodedMac());
                 if (device == null)
                 {
-                    _context.RmsList.First().Devices.Add(new RmsDevice { MAC = ToRegularMac(deviceMac), IpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString() });
+                    _context.RmsList.First().Devices.Add(new RmsDevice { MAC = deviceMac.FromUrlDecodedMac(), IpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString() });
                     return new ApiResponse { Status = Status.Success, Message = "Device successfully created" };
                 }
                 else
@@ -173,23 +277,6 @@ namespace Iris.Rms.Web.Host.Controllers
             }
         }
 
-        private string ToRegularMac(string deviceMac)
-        {
-            if (string.IsNullOrEmpty(deviceMac))
-            {
-                throw new ArgumentNullException(deviceMac);
-            }
-            if (deviceMac.Contains(":")) return deviceMac;
 
-            var macAddress = new StringBuilder();
-            for (int i = 0; i < deviceMac.Length; i++)
-            {
-                macAddress.Append(deviceMac[i].ToString().ToUpper());
-                i++;
-                macAddress.Append(deviceMac[i].ToString().ToUpper());
-                macAddress.Append(":");
-            }
-            return macAddress.ToString();
-        }
     }
 }
