@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{EA433F5B-D135-4873-B27A-B68D218E185C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{5BFDFB4D-53B6-4B67-AB3F-CF2CAD9996B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tetsts", "Tetsts", "{5CFAC3BE-3A10-454A-B983-668056C8C265}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{36217412-36EF-4566-94B6-9E9A212761C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Iris.Rms.Web.Host", "Web\Iris.Rms.Web.Host\Iris.Rms.Web.Host.csproj", "{1297B0B7-BABA-478B-9341-BE460FE7C392}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1297B0B7-BABA-478B-9341-BE460FE7C392}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1297B0B7-BABA-478B-9341-BE460FE7C392}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1297B0B7-BABA-478B-9341-BE460FE7C392}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1297B0B7-BABA-478B-9341-BE460FE7C392}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1297B0B7-BABA-478B-9341-BE460FE7C392} = {EA433F5B-D135-4873-B27A-B68D218E185C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EBDB4343-050D-4C09-9D28-271DD594F513}
+	EndGlobalSection
+EndGlobal
