@@ -1,4 +1,6 @@
 ﻿using Iris.Rms.Data;
+using Iris.Rms.Interfaces;
+using Iris.Rms.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,7 @@ namespace Iris.Rms.Web.Host
 
 
             services.AddTransient<DataSeeder>();
-
+            services.AddTransient<IRmsService, RmsService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
         }

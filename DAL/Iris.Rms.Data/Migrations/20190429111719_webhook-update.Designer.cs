@@ -4,14 +4,16 @@ using Iris.Rms.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Iris.Rms.Data.Migrations
 {
     [DbContext(typeof(RmsDbContext))]
-    partial class RmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190429111719_webhook-update")]
+    partial class webhookupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,14 +40,6 @@ namespace Iris.Rms.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CurrentStatus");
-
-                    b.Property<string>("IpAddress");
-
-                    b.Property<string>("Location");
-
-                    b.Property<string>("MAC");
-
                     b.Property<int?>("RmsConfigRmsId");
 
                     b.Property<int>("Type");
@@ -59,11 +53,9 @@ namespace Iris.Rms.Data.Migrations
 
             modelBuilder.Entity("Iris.Rms.Models.WebHook", b =>
                 {
-                    b.Property<int>("WebHookId")
+                    b.Property<int>("WebHookHookId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ActivationCommand");
 
                     b.Property<string>("Body");
 
@@ -73,11 +65,11 @@ namespace Iris.Rms.Data.Migrations
 
                     b.Property<int?>("RmsDeviceId");
 
-                    b.HasKey("WebHookId");
+                    b.HasKey("WebHookHookId");
 
                     b.HasIndex("RmsDeviceId");
 
-                    b.ToTable("WebHooks");
+                    b.ToTable("WebHook");
                 });
 
             modelBuilder.Entity("Iris.Rms.Models.RmsDevice", b =>

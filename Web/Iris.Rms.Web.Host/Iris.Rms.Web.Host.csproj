@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Iris.Rms.Interfaces\Iris.Rms.Interfaces.csproj" />
     <ProjectReference Include="..\..\DAL\Iris.Rms.Data\Iris.Rms.Data.csproj" />
+    <ProjectReference Include="..\..\Services\Iris.Rms.Service\Iris.Rms.Service.csproj" />
   </ItemGroup>
 
 </Project>
