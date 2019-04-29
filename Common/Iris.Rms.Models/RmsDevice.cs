@@ -9,7 +9,7 @@ namespace Iris.Rms.Models
         [Key]
         public int RmsDeviceId { get; set; }
         public DeviceType Type { get; set; }
-        public List<WebHook> Hooks { get; set; }
+        public virtual ICollection<WebHook> Hooks { get; set; }
 
     }
 }
