@@ -1,0 +1,15 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error</h1>
+<h4 class="text-danger">@Model.ErrorMessage</h4>
+
+@if (Model.Error != null)
+{
+<div>@Model.Error.Message</div><br />
+<div>@Model.Error.StackTrace</div>
+}
+
+

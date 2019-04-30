@@ -34,7 +34,10 @@ namespace Iris.Rms.Web.Host
             services.AddTransient<IRmsService, RmsService>();
             services.AddTransient<IVoiceRms, VoiceRms>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "MDM Swagger Endpoint", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,13 +57,23 @@ namespace Iris.Rms.Web.Host
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseStaticFiles();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MDM Swagger Endpoint");
+            });
+            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseMvc(cfg =>
+            {
+                cfg.MapRoute("Default", "{controller}/{action}/{id?}",
+                    new { Controller = "Home", Action = "Index" });
+            });
 
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var seeder = scope.ServiceProvider.GetService<DataSeeder>();
                 seeder.Seed().Wait();
-
 
                 var voiceRms = scope.ServiceProvider.GetService<IVoiceRms>();
                 voiceRms.Listen();

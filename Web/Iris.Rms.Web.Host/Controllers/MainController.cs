@@ -17,9 +17,9 @@ namespace Iris.Rms.Web.Host.Controllers
 
         [Route("/")]
         [HttpGet]
-        public ActionResult<ApiResponse> Get()
+        public ActionResult Index()
         {
-            return new ApiResponse { Status = Status.Success, Message = $"All good. We have {_context.Devices.Count()} devices configured" };
+            return View(new ApiResponse { Status = Status.Success, Message = $"All good. We have {_context.Devices.Count()} devices configured" };
         }
     }
 }

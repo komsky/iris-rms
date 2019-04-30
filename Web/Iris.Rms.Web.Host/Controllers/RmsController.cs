@@ -124,7 +124,7 @@ namespace Iris.Rms.Web.Host.Controllers
 
         private void UpdateDevice(RmsConfigModel model)
         {
-            RmsDevice device = _context.Devices.Single(rmsDevice => rmsDevice.MAC.ToUrlEncodedMac() == model.RmsDeviceInterface.macAddress.ToUrlEncodedMac());
+            RmsDevice device = _context.Devices.SingleOrDefault(rmsDevice => rmsDevice.MAC.ToUrlEncodedMac() == model.RmsDeviceInterface.macAddress.ToUrlEncodedMac());
             foreach (RmsNode node in model.nodes)
             {
                 foreach (RmsNodeDevice nodeDevice in node.devices)

@@ -4,7 +4,7 @@ using System;
 
 namespace Iris.Rms.Web.Host.Controllers
 {
-    public class RmsBaseController : ControllerBase
+    public class RmsBaseController : Controller
     {
         protected readonly RmsDbContext _context;
 
