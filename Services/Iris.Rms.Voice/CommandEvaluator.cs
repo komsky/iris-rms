@@ -1,5 +1,6 @@
 ﻿using Iris.Rms.Data;
 using Iris.Rms.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Iris.Rms.Voice
                 await LightsOn();
                 return;
             }
-            else if (commandText.Contains("set temperature"))
+            else if (commandText.Contains("set") && commandText.Contains("temperature"))
             {
                 Console.WriteLine("Setting the temperature");
                 await SetTemperature(commandText);
@@ -45,26 +46,45 @@ namespace Iris.Rms.Voice
 
         private async Task SetTemperature(string commandText)
         {
-            Models.Hvac firstHvac = _context.Hvacs.FirstOrDefault() ;
+            Models.Hvac firstHvac = _context.Hvacs?.Include(x=>x.Hooks).FirstOrDefault() ;
             if (firstHvac != null)
             {
-                Models.WebHook tempHook = firstHvac.Hooks.FirstOrDefault(hook => hook.ActivationCommand == Models.Enums.RmsCommand.LightsOn);
-                var temperature = commandText.Replace("set", "").Replace("temperature", "").Replace(" ", "");
-                tempHook.Body = tempHook.Body.Replace("{setTemperature}", temperature);
+                Models.WebHook tempHook = firstHvac.Hooks?.FirstOrDefault(hook => hook.ActivationCommand == Models.Enums.RmsCommand.HvacSetTemperature);
+                if (tempHook != null)
+                {
+                    double dt;
+                    var temperature = commandText
+                        .Replace("set", "")
+                        .Replace("temperature", "")
+                        .Replace("the", "")
+                        .Replace("to", "")
+                        .Replace(" ", "");
+                    if (double.TryParse(temperature, out dt))
+                    {
+                        var restoreHookBody = tempHook.Body.ToString();
+                        tempHook.Body = tempHook.Body.Replace("{setTemperature}", temperature);
 
-                await _rmsService.ActOnWebHook(tempHook);
-                Console.WriteLine($"-------- TEMPERATURE IS SET TO {temperature} --------- i think");
+                        await _rmsService.ActOnWebHook(tempHook);
+                        Console.WriteLine($"-------- TEMPERATURE IS SET TO {temperature} --------- i think");
+                        //temp workaround for demo - this is dbcontext scope issue
+                        tempHook.Body = restoreHookBody;
+                    }
+
+                }
 
             }
         }
 
         private async Task LightsOn()
         {
-            Models.Light firstLights = _context.RmsList.FirstOrDefault().Lights.FirstOrDefault();//
+            Models.Light firstLights = _context.RmsList?.Include(x => x.Lights).FirstOrDefault()?.Lights?.FirstOrDefault();//
             if (firstLights != null)
             {
-                Models.WebHook onHooks = firstLights.Hooks.FirstOrDefault(hook => hook.ActivationCommand == Models.Enums.RmsCommand.LightsOn);
-                await _rmsService.ActOnWebHook(onHooks);
+                Models.WebHook onHook = firstLights.Hooks?.FirstOrDefault(hook => hook.ActivationCommand == Models.Enums.RmsCommand.LightsOn);
+                if (onHook != null)
+                {
+                    await _rmsService.ActOnWebHook(onHook); 
+                }
             }
             Console.WriteLine("-------- LIGHTS ARE ON --------- i think");
         }
@@ -72,11 +92,14 @@ namespace Iris.Rms.Voice
 
         private async Task LightsOff()
         {
-            Models.Light firstLights = _context.RmsList.FirstOrDefault().Lights.FirstOrDefault(dev => dev.Type == Models.Enums.DeviceType.LightOnOff);
+            Models.Light firstLights = _context.Lights?.Include(x=>x.Hooks).FirstOrDefault(dev => dev.Type == Models.Enums.DeviceType.LightOnOff);
             if (firstLights != null)
             {
-                Models.WebHook onHooks = firstLights.Hooks.FirstOrDefault(hook => hook.ActivationCommand == Models.Enums.RmsCommand.LightsOff);
-                await _rmsService.ActOnWebHook(onHooks);
+                Models.WebHook ofHook = firstLights.Hooks?.FirstOrDefault(hook => hook.ActivationCommand == Models.Enums.RmsCommand.LightsOff);
+                if (ofHook != null)
+                {
+                    await _rmsService.ActOnWebHook(ofHook); 
+                }
             }
             Console.WriteLine("-------- LIGHTS ARE OFF -------- i think");
         }

@@ -57,16 +57,16 @@ namespace Iris.Rms.Web.Host.Controllers
 
         private async Task CreateDbFromModel(RmsConfigModel model)
         {
-            var rms = new RmsConfig { Name = model.RmsDeviceInterface.name, Location = model.RmsDeviceInterface.location, IpAddress = model.RmsDeviceInterface.localIp, MacAddress = model.RmsDeviceInterface.macAddress };
+            RmsConfig rms = new RmsConfig { Name = model.RmsDeviceInterface.name, Location = model.RmsDeviceInterface.location, IpAddress = model.RmsDeviceInterface.localIp, MacAddress = model.RmsDeviceInterface.macAddress };
 
             foreach (RmsNode node in model.nodes)
             {
                 foreach (RmsNodeDevice nodeDevice in node.devices)
                 {
-                    var deviceType = ParseLightType(nodeDevice.type);
+                    DeviceType deviceType = ParseLightType(nodeDevice.type);
                     if (deviceType == DeviceType.LightOnOff)
                     {
-                        var newLight = new Light
+                        Light newLight = new Light
                         {
                             Location = node.location,
                             Type = deviceType,
@@ -74,14 +74,14 @@ namespace Iris.Rms.Web.Host.Controllers
                             CurrentStatus = nodeDevice.status
                         };
 
-                        newLight.Hooks.Add(new WebHook { ActivationCommand = RmsCommand.LightsOn, HookUrl = BuildHookUrl(nodeDevice, model.RmsDeviceInterface.localIp), Method = "POST", Body = BuildHookActiveBody(nodeDevice, newLight) });
-                        newLight.Hooks.Add(new WebHook { ActivationCommand = RmsCommand.LightsOff, HookUrl = BuildHookUrl(nodeDevice, model.RmsDeviceInterface.localIp), Method = "POST", Body = BuildHookInactiveBody(nodeDevice, newLight) });
+                        newLight.Hooks.Add(new WebHook { ActivationCommand = RmsCommand.LightsOn, HookUrl = BuildHookUrl(nodeDevice, model.RmsDeviceInterface.localIp), Method = "POST", Body = BuildHookActiveBody(node, newLight) });
+                        newLight.Hooks.Add(new WebHook { ActivationCommand = RmsCommand.LightsOff, HookUrl = BuildHookUrl(nodeDevice, model.RmsDeviceInterface.localIp), Method = "POST", Body = BuildHookInactiveBody(node, newLight) });
                         rms.Lights.Add(newLight);
                     }
 
                     if (deviceType == DeviceType.Hvac)
                     {
-                        var newHvac = new Hvac
+                        Hvac newHvac = new Hvac
                         {
                             Location = node.location,
                             MAC = nodeDevice.macAddress
@@ -96,7 +96,7 @@ namespace Iris.Rms.Web.Host.Controllers
                         {
                             newHvac.SetpointTemperature = setpointTemp;
                         }
-                        newHvac.Hooks.Add(new WebHook { ActivationCommand = RmsCommand.HvacSetTemperature, HookUrl = BuildHookUrl(nodeDevice, model.RmsDeviceInterface.localIp), Method = "POST", Body = BuildHookSetTemperatureBody(nodeDevice, newHvac) });
+                        newHvac.Hooks.Add(new WebHook { ActivationCommand = RmsCommand.HvacSetTemperature, HookUrl = BuildHookUrl(nodeDevice, model.RmsDeviceInterface.localIp), Method = "POST", Body = BuildHookSetTemperatureBody(node, newHvac) });
                         rms.Hvacs.Add(newHvac);
                     }
                 }
@@ -124,34 +124,34 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             await _context.Database.ExecuteSqlCommandAsync(new RawSqlString("execute sp_TruncateDatabase"));
         }
-        private string BuildHookSetTemperatureBody(RmsNodeDevice nodeDevice, Hvac hvac)
+        private string BuildHookSetTemperatureBody(RmsNode node, Hvac hvac)
         {
-            List<RmsNode> body = GetBodySetTemperature(nodeDevice, hvac);
-            return JsonConvert.SerializeObject(body);
+            List<RmsNode> nodes = GetBodySetTemperature(node, hvac);
+            return JsonConvert.SerializeObject(new { nodes });
         }
 
-        private string BuildHookActiveBody(RmsNodeDevice nodeDevice, Light device)
+        private string BuildHookActiveBody(RmsNode node, Light device)
         {
-            List<RmsNode> body = GetBodyStatusOn(nodeDevice, device);
-            return JsonConvert.SerializeObject(body);
+            List<RmsNode> nodes = GetBodyStatusOn(node, device);
+            return JsonConvert.SerializeObject(new { nodes });
         }
-        private string BuildHookInactiveBody(RmsNodeDevice nodeDevice, Light device)
+        private string BuildHookInactiveBody(RmsNode node, Light device)
         {
-            List<RmsNode> body = GetBodyStatusOff(nodeDevice, device);
-            return JsonConvert.SerializeObject(body);
+            List<RmsNode> nodes = GetBodyStatusOff(node, device);
+            return JsonConvert.SerializeObject(new { nodes });
         }
 
-        private static List<RmsNode> GetBodyStatusOn(RmsNodeDevice nodeDevice, Light device)
+        private static List<RmsNode> GetBodyStatusOn(RmsNode node, Light device)
         {
-            return new List<RmsNode> { new RmsNode { macAddress = device.MAC, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = nodeDevice.macAddress, status = ((int)GenericStatus.On).ToString() } } } };
+            return new List<RmsNode> { new RmsNode { macAddress = node.macAddress, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = device.MAC, status = ((int)GenericStatus.On).ToString() } } } };
         }
-        private static List<RmsNode> GetBodySetTemperature(RmsNodeDevice nodeDevice, Hvac device)
+        private static List<RmsNode> GetBodySetTemperature(RmsNode node, Hvac device)
         {
-            return new List<RmsNode> { new RmsNode { macAddress = device.MAC, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = nodeDevice.macAddress, currentTemperature = "{currentTemperature}" } } } };
+            return new List<RmsNode> { new RmsNode { macAddress = node.macAddress, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = device.MAC, setTemperature = "{setTemperature}" } } } };
         }
-        private static List<RmsNode> GetBodyStatusOff(RmsNodeDevice nodeDevice, Light device)
+        private static List<RmsNode> GetBodyStatusOff(RmsNode node, Light device)
         {
-            return new List<RmsNode> { new RmsNode { macAddress = device.MAC, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = nodeDevice.macAddress, status = ((int)GenericStatus.Off).ToString() } } } };
+            return new List<RmsNode> { new RmsNode { macAddress = node.macAddress, devices = new List<RmsNodeDevice> { new RmsNodeDevice { macAddress = device.MAC, status = ((int)GenericStatus.Off).ToString() } } } };
         }
 
         private string BuildHookUrl(RmsNodeDevice nodeDevice, string ipAddress)
@@ -292,7 +292,7 @@ namespace Iris.Rms.Web.Host.Controllers
         {
             try
             {
-                var thisWebHook = _context.Lights.Single(dev=> dev.RmsDeviceId == deviceId).Hooks.Single(webHook => webHook.WebHookId == webHookId);
+                WebHook thisWebHook = _context.Lights.Single(dev => dev.RmsDeviceId == deviceId).Hooks.Single(webHook => webHook.WebHookId == webHookId);
                 System.Net.Http.HttpResponseMessage response = await _rmsService.ActOnWebHook(thisWebHook);
                 return new ApiResponse { Status = Status.Success, Message = await response.Content.ReadAsStringAsync() };
             }

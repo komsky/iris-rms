@@ -27,7 +27,7 @@ namespace Iris.Rms.Web.Host
             services.AddDbContext<RmsDbContext>(cfg =>
             {
                 cfg.UseSqlServer(connectionString);
-            });
+            }, ServiceLifetime.Singleton);
 
 
             services.AddTransient<DataSeeder>();
