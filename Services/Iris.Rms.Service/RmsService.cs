@@ -1,5 +1,6 @@
 ﻿using Iris.Rms.Interfaces;
 using Iris.Rms.Models;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +11,11 @@ namespace Iris.Rms.Service
     {
         public async Task<HttpResponseMessage> ActOnWebHook(WebHook webHook)
         {
-            using (var httpClient = new HttpClient())
+            using (HttpClient httpClient = new HttpClient())
             {
                 ConfigureHeaders(httpClient);
                 HttpResponseMessage result;
+                Console.WriteLine(webHook.Body);
                 switch (webHook.Method)
                 {
                     case "POST":
@@ -29,6 +31,7 @@ namespace Iris.Rms.Service
                 return result;
             }
         }
+
 
         private void ConfigureHeaders(HttpClient httpClient)
         {

@@ -27,6 +27,8 @@ namespace Iris.Rms.Web.Host.Models
         public string type { get; set; }
         public string macAddress { get; set; }
         public string status { get; set; }
+        public string setTemperature { get; set; }
+        public string currentTemperature { get; set; }
 
     }
 

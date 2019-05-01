@@ -1,4 +1,5 @@
-﻿using Iris.Rms.Interfaces;
+﻿using Iris.Rms.Data;
+using Iris.Rms.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -6,17 +7,33 @@ namespace Iris.Rms.Voice
 {
     public class VoiceRms : IVoiceRms
     {
+        private IRmsService _rmsService;
+        private RmsDbContext _context;
+        CommandEvaluator _commandEvaluator;// = new CommandEvaluator(_rmsService, _context);
+
+        public VoiceRms(CommandEvaluator commandEvaluator)
+        {
+            _commandEvaluator = commandEvaluator ?? throw new ArgumentNullException(nameof(commandEvaluator));
+        }
         public async Task Listen()
         {
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "D:\\voicerms.json");
-            var client = new GoogleCloudApiClient();
-            var commandEvaluator = new CommandEvaluator();
-            var textResponse = string.Empty;
-            do
+            try
             {
-                var task = await client.StreamingMicRecognizeAsync(10, commandEvaluator.ChooseAndCallCommand);
-                //Task.WaitAll(task);
-            } while (true);
+                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "D:\\voicerms.json");
+                var client = new GoogleCloudApiClient();
+                var commandEvaluator = new CommandEvaluator(_rmsService, _context);
+                var textResponse = string.Empty;
+                do
+                {
+                    var task = await client.StreamingMicRecognizeAsync(10, _commandEvaluator.ChooseAndCallCommand);
+                    //Task.WaitAll(task);
+                } while (true);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 }

@@ -4,14 +4,16 @@ using Iris.Rms.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Iris.Rms.Data.Migrations
 {
     [DbContext(typeof(RmsDbContext))]
-    partial class RmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190430151945_rmsdevicesplit")]
+    partial class rmsdevicesplit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +43,7 @@ namespace Iris.Rms.Data.Migrations
 
                     b.HasIndex("RmsConfigRmsId");
 
-                    b.ToTable("Hvacs");
+                    b.ToTable("Hvac");
                 });
 
             modelBuilder.Entity("Iris.Rms.Models.Light", b =>
@@ -66,7 +68,7 @@ namespace Iris.Rms.Data.Migrations
 
                     b.HasIndex("RmsConfigRmsId");
 
-                    b.ToTable("Lights");
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("Iris.Rms.Models.RmsConfig", b =>

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Iris.Rms.Interfaces\Iris.Rms.Interfaces.csproj" />
+    <ProjectReference Include="..\..\DAL\Iris.Rms.Data\Iris.Rms.Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Iris.Rms.Models;
+using Iris.Rms.Models.Suite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

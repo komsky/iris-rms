@@ -19,7 +19,7 @@ namespace Iris.Rms.Web.Host.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return View(new ApiResponse { Status = Status.Success, Message = $"All good. We have {_context.Devices.Count()} devices configured" };
+            return View(new ApiResponse { Status = Status.Success, Message = $"All good. We have {_context.Lights.Count()} lights and {_context.Hvacs.Count()} hvacs configured" });
         }
     }
 }

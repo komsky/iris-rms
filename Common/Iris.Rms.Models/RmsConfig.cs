@@ -1,17 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Iris.Rms.Models
 {
     public class RmsConfig
     {
+        public RmsConfig()
+        {
+            Lights = new List<Light>();
+            Hvacs = new List<Hvac>();
+        }
         [Key]
         public int RmsId { get; set; }
-        public string Description { get; set; }
-        public virtual ICollection<RmsDevice> Devices { get; set; }
+        public string Name { get; set; }
+        public string Location { get; set; }
+        public string IpAddress { get; set; }
+        public virtual ICollection<Light> Lights { get; set; }
+        public virtual ICollection<Hvac> Hvacs { get; set; }
+        public string MacAddress { get; set; }
     }
 }

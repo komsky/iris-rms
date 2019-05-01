@@ -7,7 +7,8 @@ namespace Iris.Rms.Data
     {
         public RmsDbContext(DbContextOptions<RmsDbContext> options) : base(options) { }
         public DbSet<RmsConfig> RmsList { get; set; }
-        public DbSet<RmsDevice> Devices { get; set; }
+        public DbSet<Light> Lights { get; set; }
+        public DbSet<Hvac> Hvacs { get; set; }
         public DbSet<WebHook> WebHooks { get; set; }
     }
 }

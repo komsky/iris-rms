@@ -19,10 +19,12 @@ namespace Iris.Rms.Data
             _context.Database.Migrate();
             if (!_context.RmsList.Any())
             {
-                _context.RmsList.Add(new Models.RmsConfig { Description = "First and only RMS... for now" });
+                _context.RmsList.Add(new Models.RmsConfig { Name = "First and only RMS... for now" });
 
             }
 
+            _context.SaveChanges();
+            _context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.RmsList ON;");
             _context.SaveChanges();
         }
     }

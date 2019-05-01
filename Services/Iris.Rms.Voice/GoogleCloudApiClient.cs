@@ -23,7 +23,7 @@ namespace Iris.Rms.Voice
             }
             return null;
         }
-        public async Task<object> StreamingMicRecognizeAsync(int seconds, Action<string> processResult)
+        public async Task<object> StreamingMicRecognizeAsync(int seconds, Func<string, Task> processResult)
         {
             //.NET Core NAudio does not have device count
             //if (NAudio.Wave.WaveInProvider().DeviceCount < 1)
@@ -92,7 +92,7 @@ namespace Iris.Rms.Voice
                     }
                 };
             waveIn.StartRecording();
-            Console.WriteLine("Speak now.");
+            Console.WriteLine("------- SPEAK NOW, OR STAY SILENT FOREVER ------");
             await Task.Delay(TimeSpan.FromSeconds(seconds));
             // Stop recording and shut down.
             waveIn.StopRecording();

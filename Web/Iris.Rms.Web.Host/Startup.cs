@@ -31,8 +31,10 @@ namespace Iris.Rms.Web.Host
 
 
             services.AddTransient<DataSeeder>();
+            services.AddTransient<CommandEvaluator>();
             services.AddTransient<IRmsService, RmsService>();
             services.AddTransient<IVoiceRms, VoiceRms>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSwaggerGen(c =>
             {
@@ -70,13 +72,14 @@ namespace Iris.Rms.Web.Host
                     new { Controller = "Home", Action = "Index" });
             });
 
-            using (var scope = app.ApplicationServices.CreateScope())
+            using (IServiceScope scope = app.ApplicationServices.CreateScope())
             {
-                var seeder = scope.ServiceProvider.GetService<DataSeeder>();
+                DataSeeder seeder = scope.ServiceProvider.GetService<DataSeeder>();
                 seeder.Seed().Wait();
 
-                var voiceRms = scope.ServiceProvider.GetService<IVoiceRms>();
+                IVoiceRms voiceRms = scope.ServiceProvider.GetService<IVoiceRms>();
                 voiceRms.Listen();
+
             }
 
         }
