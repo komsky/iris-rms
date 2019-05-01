@@ -1,6 +1,7 @@
 ﻿using Iris.Rms.Data;
 using Iris.Rms.Interfaces;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Iris.Rms.Voice
@@ -17,7 +18,9 @@ namespace Iris.Rms.Voice
         {
             try
             {
-                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "D:\\voicerms.json");
+                //var pathToFile = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase), "voicerms.json") ;
+
+                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "C:\\voicerms.json");
                 var client = new GoogleCloudApiClient();
                 var textResponse = string.Empty;
                 do
@@ -26,10 +29,9 @@ namespace Iris.Rms.Voice
                     //Task.WaitAll(task);
                 } while (true);
             }
-            catch (Exception ex)
+            catch 
             {
-
-                throw;
+                
             }
         }
     }
