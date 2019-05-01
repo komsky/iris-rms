@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Iris.Rms.Web.Host.Models
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class RmsDeviceInterface
     {
         public string name { get; set; }
@@ -12,7 +13,7 @@ namespace Iris.Rms.Web.Host.Models
         public string localIp { get; set; }
         public string uptime { get; set; }
     }
-
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class RmsNode
     {
         public string name { get; set; }
@@ -20,7 +21,7 @@ namespace Iris.Rms.Web.Host.Models
         public string macAddress { get; set; }
         public List<RmsNodeDevice> devices { get; set; }
     }
-
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class RmsNodeDevice
     {
         public string name { get; set; }
@@ -31,7 +32,7 @@ namespace Iris.Rms.Web.Host.Models
         public string currentTemperature { get; set; }
 
     }
-
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class RmsConfigModel
     {
         [JsonProperty("interface")]

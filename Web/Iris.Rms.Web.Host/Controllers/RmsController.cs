@@ -28,6 +28,7 @@ namespace Iris.Rms.Web.Host.Controllers
         public ActionResult<IEnumerable<RmsConfig>> Get()
         {
             return _context.RmsList
+                .Include(rms => rms.Hvacs)
                 .Include(rms => rms.Lights)
                 .ThenInclude(device => device.Hooks).ToList();
         }

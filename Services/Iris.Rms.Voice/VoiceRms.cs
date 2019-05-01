@@ -7,8 +7,6 @@ namespace Iris.Rms.Voice
 {
     public class VoiceRms : IVoiceRms
     {
-        private IRmsService _rmsService;
-        private RmsDbContext _context;
         CommandEvaluator _commandEvaluator;// = new CommandEvaluator(_rmsService, _context);
 
         public VoiceRms(CommandEvaluator commandEvaluator)
@@ -21,7 +19,6 @@ namespace Iris.Rms.Voice
             {
                 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "D:\\voicerms.json");
                 var client = new GoogleCloudApiClient();
-                var commandEvaluator = new CommandEvaluator(_rmsService, _context);
                 var textResponse = string.Empty;
                 do
                 {
